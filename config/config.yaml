@@ -1,0 +1,32 @@
+server:
+  port: ":8080"
+  read_timeout: 30s
+  write_timeout: 30s
+
+database:
+  host: "localhost"
+  port: 5432
+  user: "postgres"
+  password: "password"
+  dbname: "crypto_insights"
+  sslmode: "disable"
+
+redis:
+  host: "localhost"
+  port: 6379
+  password: ""
+  db: 0
+
+blockchain:
+  rpc_url: "https://mainnet.base.org"
+  chain_id: 8453
+  explorer_url: "https://basescan.org"
+
+data_collection:
+  block_scan_interval: 5s
+  transaction_scan_interval: 3s
+  price_update_interval: 1m
+  batch_size: 10
+
+log_level: "info"
+graceful_shutdown_timeout: 30s
