@@ -2,11 +2,12 @@ import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { Blockchain, Analytics, DataUsage, Dashboard } from '@mui/icons-material';
+import { NavItem } from '../types';
 
-const Navbar = () => {
+function Navbar() {
   const location = useLocation();
 
-  const navItems = [
+  const navItems: NavItem[] = [
     { path: '/', label: 'Dashboard', icon: <Dashboard /> },
     { path: '/blockchain', label: 'Blockchain', icon: <Blockchain /> },
     { path: '/analytics', label: 'Analytics', icon: <Analytics /> },
@@ -49,6 +50,6 @@ const Navbar = () => {
       </Toolbar>
     </AppBar>
   );
-};
+}
 
 export default Navbar;

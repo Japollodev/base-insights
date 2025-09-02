@@ -16,12 +16,13 @@ import {
 } from '@mui/icons-material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
+import { Stats, BlockchainStatus, ChartData } from '../types';
 
-const Dashboard = () => {
-  const [stats, setStats] = useState(null);
-  const [blockchainStatus, setBlockchainStatus] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+function Dashboard() {
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [blockchainStatus, setBlockchainStatus] = useState<BlockchainStatus | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchDashboardData();
@@ -29,12 +30,12 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (): Promise<void> => {
     try {
       setLoading(true);
       const [statsRes, blockchainRes] = await Promise.all([
-        axios.get('/api/v1/data/stats'),
-        axios.get('/api/v1/blockchain/status'),
+        axios.get<Stats>('/api/v1/data/stats'),
+        axios.get<BlockchainStatus>('/api/v1/blockchain/status'),
       ]);
       
       setStats(statsRes.data);
@@ -60,7 +61,7 @@ const Dashboard = () => {
     return <Alert severity="error">{error}</Alert>;
   }
 
-  const mockChartData = [
+  const mockChartData: ChartData[] = [
     { time: '00:00', blocks: 120, transactions: 1500 },
     { time: '04:00', blocks: 135, transactions: 1800 },
     { time: '08:00', blocks: 150, transactions: 2200 },

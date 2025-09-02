@@ -30,27 +30,28 @@ import {
 } from '@mui/icons-material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import axios from 'axios';
+import { BlockData, TransactionData, GasPriceData } from '../types';
 
-const Analytics = () => {
-  const [blocks, setBlocks] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-  const [gasPrices, setGasPrices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [filter, setFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+function Analytics() {
+  const [blocks, setBlocks] = useState<BlockData[]>([]);
+  const [transactions, setTransactions] = useState<TransactionData[]>([]);
+  const [gasPrices, setGasPrices] = useState<GasPriceData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     fetchAnalyticsData();
   }, []);
 
-  const fetchAnalyticsData = async () => {
+  const fetchAnalyticsData = async (): Promise<void> => {
     try {
       setLoading(true);
       const [blocksRes, transactionsRes, gasPricesRes] = await Promise.all([
-        axios.get('/api/v1/analytics/blocks'),
-        axios.get('/api/v1/analytics/transactions'),
-        axios.get('/api/v1/analytics/gas-prices'),
+        axios.get<BlockData[]>('/api/v1/analytics/blocks'),
+        axios.get<TransactionData[]>('/api/v1/analytics/transactions'),
+        axios.get<GasPriceData[]>('/api/v1/analytics/gas-prices'),
       ]);
       
       setBlocks(blocksRes.data || []);
@@ -66,19 +67,19 @@ const Analytics = () => {
   };
 
   // Mock data for demonstration
-  const mockBlocks = [
+  const mockBlocks: BlockData[] = [
     { number: 12345678, hash: '0x1234...', timestamp: new Date(), transactions: 150, gasUsed: 15000000, gasLimit: 30000000 },
     { number: 12345677, hash: '0x5678...', timestamp: new Date(Date.now() - 12000), transactions: 145, gasUsed: 14800000, gasLimit: 30000000 },
     { number: 12345676, hash: '0x9abc...', timestamp: new Date(Date.now() - 24000), transactions: 160, gasUsed: 15200000, gasLimit: 30000000 },
   ];
 
-  const mockTransactions = [
+  const mockTransactions: TransactionData[] = [
     { hash: '0xabcd...', from: '0x1234...', to: '0x5678...', value: '0.1', gas: 21000, gasPrice: '20000000000' },
     { hash: '0xefgh...', from: '0x9abc...', to: '0xdef0...', value: '0.05', gas: 65000, gasPrice: '25000000000' },
     { hash: '0xijkl...', from: '0x1111...', to: '0x2222...', value: '0.2', gas: 100000, gasPrice: '22000000000' },
   ];
 
-  const mockGasPrices = [
+  const mockGasPrices: GasPriceData[] = [
     { timestamp: new Date(Date.now() - 60000), gasPrice: '20000000000', gasPriceGwei: '20' },
     { timestamp: new Date(Date.now() - 30000), gasPrice: '22000000000', gasPriceGwei: '22' },
     { timestamp: new Date(), gasPrice: '25000000000', gasPriceGwei: '25' },

@@ -22,14 +22,15 @@ import {
   Warning,
 } from '@mui/icons-material';
 import axios from 'axios';
+import { DataCollectionStatus, DataCollectionStats } from '../types';
 
-const DataCollection = () => {
-  const [status, setStatus] = useState(null);
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isStarting, setIsStarting] = useState(false);
-  const [isStopping, setIsStopping] = useState(false);
+function DataCollection() {
+  const [status, setStatus] = useState<DataCollectionStatus | null>(null);
+  const [stats, setStats] = useState<DataCollectionStats | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isStarting, setIsStarting] = useState<boolean>(false);
+  const [isStopping, setIsStopping] = useState<boolean>(false);
 
   useEffect(() => {
     fetchDataCollectionData();
@@ -37,11 +38,11 @@ const DataCollection = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const fetchDataCollectionData = async () => {
+  const fetchDataCollectionData = async (): Promise<void> => {
     try {
       const [statusRes, statsRes] = await Promise.all([
-        axios.get('/api/v1/data/status'),
-        axios.get('/api/v1/data/stats'),
+        axios.get<DataCollectionStatus>('/api/v1/data/status'),
+        axios.get<DataCollectionStats>('/api/v1/data/stats'),
       ]);
       
       setStatus(statusRes.data);
@@ -55,7 +56,7 @@ const DataCollection = () => {
     }
   };
 
-  const handleStartService = async () => {
+  const handleStartService = async (): Promise<void> => {
     try {
       setIsStarting(true);
       await axios.post('/api/v1/data/start');
@@ -68,7 +69,7 @@ const DataCollection = () => {
     }
   };
 
-  const handleStopService = async () => {
+  const handleStopService = async (): Promise<void> => {
     try {
       setIsStopping(true);
       await axios.post('/api/v1/data/stop');
@@ -93,11 +94,11 @@ const DataCollection = () => {
     return <Alert severity="error">{error}</Alert>;
   }
 
-  const getStatusColor = (isRunning) => {
+  const getStatusColor = (isRunning: boolean): 'success' | 'error' => {
     return isRunning ? 'success' : 'error';
   };
 
-  const getStatusIcon = (isRunning) => {
+  const getStatusIcon = (isRunning: boolean): React.ReactElement => {
     return isRunning ? <CheckCircle color="success" /> : <Error color="error" />;
   };
 

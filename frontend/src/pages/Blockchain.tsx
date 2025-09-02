@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import {
   Grid,
   Card,
@@ -19,15 +19,16 @@ import {
 } from '@mui/material';
 import { Search, Refresh } from '@mui/icons-material';
 import axios from 'axios';
+import { Block, Transaction, GasPrice, NetworkInfo } from '../types';
 
-const Blockchain = () => {
-  const [currentBlock, setCurrentBlock] = useState(null);
-  const [gasPrice, setGasPrice] = useState(null);
-  const [networkInfo, setNetworkInfo] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchBlock, setSearchBlock] = useState('');
-  const [searchedBlock, setSearchedBlock] = useState(null);
+function Blockchain() {
+  const [currentBlock, setCurrentBlock] = useState<Block | null>(null);
+  const [gasPrice, setGasPrice] = useState<GasPrice | null>(null);
+  const [networkInfo, setNetworkInfo] = useState<NetworkInfo | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchBlock, setSearchBlock] = useState<string>('');
+  const [searchedBlock, setSearchedBlock] = useState<Block | null>(null);
 
   useEffect(() => {
     fetchBlockchainData();
@@ -35,13 +36,13 @@ const Blockchain = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const fetchBlockchainData = async () => {
+  const fetchBlockchainData = async (): Promise<void> => {
     try {
       setLoading(true);
       const [blockRes, gasRes, networkRes] = await Promise.all([
-        axios.get('/api/v1/blockchain/current-block'),
-        axios.get('/api/v1/blockchain/gas-price'),
-        axios.get('/api/v1/blockchain/network-info'),
+        axios.get<Block>('/api/v1/blockchain/current-block'),
+        axios.get<GasPrice>('/api/v1/blockchain/gas-price'),
+        axios.get<NetworkInfo>('/api/v1/blockchain/network-info'),
       ]);
       
       setCurrentBlock(blockRes.data);
@@ -56,11 +57,11 @@ const Blockchain = () => {
     }
   };
 
-  const handleSearchBlock = async () => {
+  const handleSearchBlock = async (): Promise<void> => {
     if (!searchBlock) return;
     
     try {
-      const response = await axios.get(`/api/v1/blockchain/block/${searchBlock}`);
+      const response = await axios.get<Block>(`/api/v1/blockchain/block/${searchBlock}`);
       setSearchedBlock(response.data);
     } catch (err) {
       setError('Failed to fetch block');
@@ -215,7 +216,7 @@ const Blockchain = () => {
                   label="Block Number"
                   type="number"
                   value={searchBlock}
-                  onChange={(e) => setSearchBlock(e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setSearchBlock(e.target.value)}
                   placeholder="Enter block number"
                   sx={{ flexGrow: 1 }}
                 />
@@ -271,7 +272,7 @@ const Blockchain = () => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {currentBlock.transactions.slice(0, 10).map((tx, index) => (
+                      {currentBlock.transactions.slice(0, 10).map((tx: Transaction, index: number) => (
                         <TableRow key={index}>
                           <TableCell>{tx.hash?.substring(0, 20)}...</TableCell>
                           <TableCell>{tx.from?.substring(0, 20)}...</TableCell>
