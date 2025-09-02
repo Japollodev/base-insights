@@ -1,8 +1,9 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { Blockchain, Analytics, DataUsage, Dashboard } from '@mui/icons-material';
+import {  Analytics, DataUsage, Dashboard } from '@mui/icons-material';
 import { NavItem } from '../types';
+import Blockchain from '../pages/Blockchain';
 
 function Navbar() {
   const location = useLocation();
